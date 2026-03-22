@@ -25,7 +25,7 @@ watcher.on('ready', () => {
     console.log(' READY TO ROLL!');
 });
 
-_handleSCSS();
+renderSCSS();
 
 function _processFile(filePath, watchEvent) {
     
@@ -47,7 +47,7 @@ function _processFile(filePath, watchEvent) {
 
     if (filePath.match(/\.scss$/)) {
         if (watchEvent === 'change') {
-            return _handleSCSS(filePath, watchEvent);
+            return renderSCSS();
         }
         return;
     }
@@ -79,8 +79,4 @@ function _renderAllPug() {
     _.each(allPugFiles, (value, filePath) => {
         renderPug(filePath);
     });
-}
-
-function _handleSCSS() {
-    renderSCSS();
 }
