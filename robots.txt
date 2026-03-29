@@ -1,6 +1,4 @@
-# robots.txt for rmarston.com
-# Block AI Data Scrapers and LLM Crawlers
-
+# Block common AI scrapers and crawlers from scraping the repository contents
 User-agent: GPTBot
 Disallow: /
 
@@ -10,16 +8,16 @@ Disallow: /
 User-agent: Google-Extended
 Disallow: /
 
+User-agent: CCBot
+Disallow: /
+
+User-agent: Anthropic-ai
+Disallow: /
+
 User-agent: ClaudeBot
 Disallow: /
 
 User-agent: Claude-Web
-Disallow: /
-
-User-agent: anthropic-ai
-Disallow: /
-
-User-agent: CCBot
 Disallow: /
 
 User-agent: Omgilibot
@@ -31,8 +29,12 @@ Disallow: /
 User-agent: FacebookBot
 Disallow: /
 
+User-agent: Bytespider
+Disallow: /
+
 User-agent: PerplexityBot
 Disallow: /
 
+# Allow typical search engines for SEO
 User-agent: *
 Disallow:
