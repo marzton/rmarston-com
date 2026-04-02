@@ -196,7 +196,6 @@ nav {
 }
 .product-card {
   background: var(--surface);
-  cursor: pointer;
   position: relative;
   overflow: hidden;
 }
