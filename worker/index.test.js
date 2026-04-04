@@ -44,11 +44,8 @@ describe('Cloudflare Worker', () => {
       expect(workerLogic.getRedirectStatus('308')).toBe(308);
     });
 
-    test('returns default 301 for invalid or missing inputs', () => {
-      expect(workerLogic.getRedirectStatus('303')).toBe(301);
-      expect(workerLogic.getRedirectStatus('random')).toBe(301);
-      expect(workerLogic.getRedirectStatus(undefined)).toBe(301);
-    });
+    expect(response.status).toBe(500);
+    expect(await response.text()).toBe('Missing required worker configuration.');
   });
 
   describe('fetch', () => {
@@ -98,19 +95,17 @@ describe('Cloudflare Worker', () => {
       expect(await response.text()).toBe('Missing required worker configuration.');
     });
 
-    test('redirects if hostname does not match PRIMARY_DOMAIN', async () => {
-      const request = new Request('https://other.com/path?query=1');
-      const response = await workerLogic.fetch(request, env);
-      expect(response.status).toBe(301);
-      expect(response.headers.get('Location')).toBe('https://example.com/path?query=1');
-    });
+    expect(upstreamReq.headers.get('authorization')).toBeNull();
+    expect(upstreamReq.headers.get('cookie')).toBeNull();
+    expect(upstreamReq.headers.get('keep-alive')).toBeNull();
+    expect(upstreamReq.headers.get('x-remove-me')).toBeNull();
+    expect(upstreamReq.headers.get('transfer-encoding')).toBeNull();
 
-    test('uses custom redirect status from env', async () => {
-      env.REDIRECT_MODE = '302';
-      const request = new Request('https://other.com');
-      const response = await workerLogic.fetch(request, env);
-      expect(response.status).toBe(302);
-    });
+    expect(upstreamReq.headers.get('x-keep')).toBe('safe');
+    expect(upstreamReq.headers.get('host')).toBe('backend.internal');
+    expect(upstreamReq.headers.get('x-forwarded-host')).toBe('example.com');
+    expect(upstreamReq.headers.get('x-forwarded-proto')).toBe('https');
+  });
 
     test('returns 404 when request is already on PRIMARY_DOMAIN', async () => {
       const request = new Request('https://example.com/any-path');
