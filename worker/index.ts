@@ -6,8 +6,9 @@ export interface Env {
 
 function getRedirectStatus(value?: string): 301 | 302 | 307 | 308 {
   const parsed = Number(value);
-  if (parsed === 301 || parsed === 302 || parsed === 307 || parsed === 308) {
-    return parsed;
+  const redirectStatuses = [301, 302, 307, 308];
+  if (redirectStatuses.includes(parsed)) {
+    return parsed as 301 | 302 | 307 | 308;
   }
   return 301;
 }
