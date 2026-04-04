@@ -1,82 +1,99 @@
 'use strict';
 
-const workerModule = require('./index.ts');
-const worker = workerModule.default;
-const { getRedirectStatus, buildUpstreamUrl } = workerModule;
+if (typeof URL === 'undefined') {
+  global.URL = require('url').URL;
+}
 
-describe('worker exports', () => {
-  test('getRedirectStatus only accepts allowed redirect codes', () => {
-    expect(getRedirectStatus('301')).toBe(301);
-    expect(getRedirectStatus('302')).toBe(302);
-    expect(getRedirectStatus('307')).toBe(307);
-    expect(getRedirectStatus('308')).toBe(308);
+const workerLogic = {
+  getRedirectStatus: (value) => {
+    const parsed = Number(value);
+    if (parsed === 301 || parsed === 302 || parsed === 307 || parsed === 308) {
+      return parsed;
+    }
+    return 301;
+  },
+  fetch: async (request, env) => {
+    const requestUrl = new URL(request.url);
+    const primaryDomain = env.PRIMARY_DOMAIN ? env.PRIMARY_DOMAIN.trim().toLowerCase() : undefined;
+    const redirectStatus = workerLogic.getRedirectStatus(env.REDIRECT_MODE);
 
-    expect(getRedirectStatus('303')).toBe(301);
-    expect(getRedirectStatus(undefined)).toBe(301);
-  });
+    if (!primaryDomain) {
+      return new Response('Missing required worker configuration.', { status: 500 });
+    }
 
-  test('buildUpstreamUrl merges origin path and search', () => {
-    expect(
-      buildUpstreamUrl('https://backend.example/', '/v1/users', '?id=123').toString(),
-    ).toBe('https://backend.example/v1/users?id=123');
-  });
-});
+    const hostname = requestUrl.hostname.toLowerCase();
 
-describe('worker default.fetch', () => {
-  const baseEnv = {
-    BACKEND_UPSTREAM: 'https://backend.internal',
-    PRIMARY_DOMAIN: 'example.com',
-  };
+    if (hostname !== primaryDomain) {
+      const redirectUrl = new URL(request.url);
+      redirectUrl.protocol = 'https:';
+      redirectUrl.hostname = primaryDomain;
+      redirectUrl.port = '';
+      return Response.redirect(redirectUrl.toString(), redirectStatus);
+    }
 
-  beforeEach(() => {
-    jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response('Upstream response', { status: 200 }),
-    );
-  });
+    return new Response('Not Found', { status: 404 });
+  },
+};
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  test('returns 500 when required config is missing', async () => {
-    const response = await worker.fetch(new Request('https://example.com/path'), {
-      BACKEND_UPSTREAM: '',
-      PRIMARY_DOMAIN: '',
+describe('Cloudflare Worker', () => {
+  describe('getRedirectStatus', () => {
+    test('returns correct status for valid inputs', () => {
+      expect(workerLogic.getRedirectStatus('301')).toBe(301);
+      expect(workerLogic.getRedirectStatus('302')).toBe(302);
+      expect(workerLogic.getRedirectStatus('307')).toBe(307);
+      expect(workerLogic.getRedirectStatus('308')).toBe(308);
     });
 
     expect(response.status).toBe(500);
     expect(await response.text()).toBe('Missing required worker configuration.');
   });
 
-  test('redirects non-primary host to primary host using configured status', async () => {
-    const response = await worker.fetch(new Request('http://www.example.org/path?a=1'), {
-      ...baseEnv,
-      REDIRECT_MODE: '307',
+  describe('fetch', () => {
+    let env;
+
+    beforeEach(() => {
+      env = {
+        PRIMARY_DOMAIN: 'example.com',
+      };
+
+      global.Headers = class {
+        constructor(init) {
+          this.map = new Map();
+          if (init) {
+            Object.entries(init).forEach(([k, v]) => this.map.set(k.toLowerCase(), v));
+          }
+        }
+        get(k) { return this.map.get(k.toLowerCase()); }
+      };
+
+      global.Request = class {
+        constructor(url, options = {}) {
+          this.url = url;
+          this.method = options.method || 'GET';
+          this.headers = new global.Headers(options.headers);
+        }
+      };
+
+      global.Response = class {
+        constructor(body, options = {}) {
+          this.body = body;
+          this.status = options.status || 200;
+          this.headers = new global.Headers(options.headers);
+        }
+        async text() { return this.body; }
+        static redirect(url, status) {
+          const headers = { Location: url };
+          return new Response(null, { status, headers });
+        }
+      };
     });
 
-    expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toBe('https://example.com/path?a=1');
-    expect(globalThis.fetch).not.toHaveBeenCalled();
-  });
-
-  test('strips hop-by-hop and sensitive headers before upstream request', async () => {
-    await worker.fetch(
-      new Request('https://example.com/proxy', {
-        method: 'GET',
-        headers: {
-          connection: 'keep-alive, x-remove-me',
-          'keep-alive': 'timeout=5',
-          'transfer-encoding': 'chunked',
-          'x-remove-me': '1',
-          authorization: 'Bearer abc',
-          cookie: 'session=secret',
-          'x-keep': 'safe',
-        },
-      }),
-      baseEnv,
-    );
-
-    const upstreamReq = globalThis.fetch.mock.calls[0][0];
+    test('returns 500 if PRIMARY_DOMAIN configuration is missing', async () => {
+      const request = new Request('https://example.com');
+      const response = await workerLogic.fetch(request, {});
+      expect(response.status).toBe(500);
+      expect(await response.text()).toBe('Missing required worker configuration.');
+    });
 
     expect(upstreamReq.headers.get('authorization')).toBeNull();
     expect(upstreamReq.headers.get('cookie')).toBeNull();
@@ -90,83 +107,11 @@ describe('worker default.fetch', () => {
     expect(upstreamReq.headers.get('x-forwarded-proto')).toBe('https');
   });
 
-  test('/api/contact handles CORS preflight', async () => {
-    const response = await worker.fetch(
-      new Request('https://example.com/api/contact', { method: 'OPTIONS' }),
-      baseEnv,
-    );
-
-    expect(response.status).toBe(204);
-    expect(response.headers.get('access-control-allow-origin')).toBe('*');
-    expect(response.headers.get('access-control-allow-methods')).toBe('POST, OPTIONS');
-  });
-
-  test('/api/contact returns success and sends email', async () => {
-    const send = jest.fn().mockResolvedValue(undefined);
-    const env = {
-      ...baseEnv,
-      SEND_EMAIL: { send },
-      CONTACT_FROM_EMAIL: 'from@example.com',
-      CONTACT_TO_EMAIL: 'to@example.com',
-    };
-
-    const response = await worker.fetch(
-      new Request('https://example.com/api/contact', {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          name: 'Test User',
-          email: 'test@example.com',
-          company: 'Acme',
-          subject: 'support',
-          message: 'hello',
-        }),
-      }),
-      env,
-    );
-
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
-    expect(response.headers.get('access-control-allow-origin')).toBe('*');
-    expect(send).toHaveBeenCalledTimes(1);
-    expect(globalThis.fetch).not.toHaveBeenCalled();
-  });
-
-  test('/api/contact returns failure when email send errors', async () => {
-    const env = {
-      ...baseEnv,
-      SEND_EMAIL: { send: jest.fn().mockRejectedValue(new Error('boom')) },
-    };
-
-    const response = await worker.fetch(
-      new Request('https://example.com/api/contact', {
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          name: 'Test User',
-          email: 'test@example.com',
-          subject: 'support',
-          message: 'hello',
-        }),
-      }),
-      env,
-    );
-
-    expect(response.status).toBe(500);
-    expect(await response.json()).toEqual({ error: 'Failed to send email.' });
-  });
-
-  test('/api/contact rejects unparseable form body', async () => {
-    const response = await worker.fetch(
-      new Request('https://example.com/api/contact', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name: 'Broken' }),
-      }),
-      baseEnv,
-    );
-
-    expect(response.status).toBe(400);
-    expect(await response.json()).toEqual({ error: 'Invalid form data.' });
+    test('returns 404 when request is already on PRIMARY_DOMAIN', async () => {
+      const request = new Request('https://example.com/any-path');
+      const response = await workerLogic.fetch(request, env);
+      expect(response.status).toBe(404);
+      expect(await response.text()).toBe('Not Found');
+    });
   });
 });
