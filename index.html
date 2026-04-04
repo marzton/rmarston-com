@@ -1,434 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Robert Marston | Career Portfolio</title>
-    <meta
-      name="description"
-      content="Robert Marston's personal career website showcasing leadership experience, key achievements, and featured work."
-    />
-    <style>
-      :root {
-        --bg: #0b1020;
-        --surface: #141b33;
-        --surface-alt: #1b2442;
-        --text: #e9eeff;
-        --muted: #b4c0e6;
-        --brand: #74b3ff;
-        --accent: #8bffc9;
-        --border: #2a355e;
-        --shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>R. Marston — Registry</title>
+  <meta name="description" content="Personal identity registry for R. Marston. Executive portfolio, Armsway, and Solefood NY." />
+  <meta name="author" content="Rob Marston" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://rmarston.com" />
 
-      * {
-        box-sizing: border-box;
-      }
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://rmarston.com" />
+  <meta property="og:title" content="R. Marston — Registry" />
+  <meta property="og:description" content="Personal identity registry for R. Marston." />
 
-      html,
-      body {
-        margin: 0;
-        font-family:
-          Inter,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Arial,
-          sans-serif;
-        color: var(--text);
-        background: linear-gradient(
-          180deg,
-          #0b1020 0%,
-          #0a1530 45%,
-          #0d1b38 100%
-        );
-      }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
-      a {
-        color: inherit;
-      }
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-      .container {
-        width: min(1100px, 92vw);
-        margin: 0 auto;
-      }
+    :root {
+      --void:  #080a0d;
+      --green: #00e5a0;
+      --steel: #4a6075;
+      --white: #e8eaed;
+    }
 
-      .nav {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        backdrop-filter: blur(10px);
-        background: rgba(11, 16, 32, 0.75);
-        border-bottom: 1px solid var(--border);
-      }
+    html, body {
+      background: var(--void);
+      color: var(--white);
+      min-height: 100vh;
+      font-family: 'IBM Plex Mono', monospace;
+    }
 
-      .nav-inner {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.85rem 0;
-      }
+    /* ── Layout ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
 
-      .brand {
-        font-weight: 800;
-        letter-spacing: 0.04em;
-      }
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--steel);
+      padding-bottom: 2rem;
+      margin-bottom: 3rem;
+    }
 
-      .links {
-        display: flex;
-        gap: 1rem;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
+    .registry-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--steel);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
 
-      .hero {
-        padding: 5rem 0 3rem;
-        display: grid;
-        gap: 2rem;
-        grid-template-columns: 1.2fr 0.8fr;
-        align-items: center;
-      }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
 
-      .eyebrow {
-        display: inline-block;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.14em;
-        color: var(--accent);
-        margin-bottom: 1rem;
-      }
+    h1 span {
+      color: var(--green);
+    }
 
-      h1 {
-        font-size: clamp(2rem, 4vw, 3.6rem);
-        margin: 0;
-        line-height: 1.15;
-      }
+    .cursor {
+      display: inline-block;
+      width: 0.6ch;
+      height: 1em;
+      background: var(--green);
+      margin-left: 0.1em;
+      vertical-align: text-bottom;
+      animation: blink 1.1s step-end infinite;
+    }
 
-      .lead {
-        color: var(--muted);
-        font-size: 1.1rem;
-        line-height: 1.7;
-        margin: 1rem 0 2rem;
-        max-width: 60ch;
-      }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
 
-      .cta-row {
-        display: flex;
-        gap: 0.8rem;
-        flex-wrap: wrap;
-      }
+    /* ── Directory table ── */
+    .dir-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.9rem;
+    }
 
-      .btn {
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 0.7rem 1.2rem;
-        text-decoration: none;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
+    .dir-table thead tr {
+      border-bottom: 1px solid var(--steel);
+    }
 
-      .btn.primary {
-        background: linear-gradient(135deg, var(--brand), #98c4ff);
-        color: #06122d;
-        border: none;
-      }
+    .dir-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--steel);
+      padding: 0 0 0.75rem;
+    }
 
-      .card {
-        background: linear-gradient(180deg, var(--surface), var(--surface-alt));
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        box-shadow: var(--shadow);
-      }
+    .dir-table th:last-child { text-align: right; }
 
-      .hero-card {
-        padding: 1.4rem;
-      }
+    .dir-table tbody tr {
+      border-bottom: 1px solid #1a1f27;
+      transition: background 0.15s;
+    }
 
-      .hero-card h2 {
-        margin-top: 0;
-        font-size: 1.1rem;
-      }
+    .dir-table tbody tr:hover {
+      background: #0e1117;
+    }
 
-      .stat {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 0.8rem;
-        align-items: center;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px dashed var(--border);
-      }
+    .dir-table td {
+      padding: 1.1rem 0;
+      vertical-align: top;
+    }
 
-      .stat strong {
-        font-size: 1.4rem;
-        color: var(--accent);
-      }
+    .dir-table td:last-child {
+      text-align: right;
+      color: var(--steel);
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
 
-      section {
-        padding: 2rem 0;
-      }
+    .entry-path {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 1rem;
+    }
 
-      h3 {
-        margin: 0 0 0.9rem;
-        font-size: 1.5rem;
-      }
+    .entry-path a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-      .grid {
-        display: grid;
-        gap: 1rem;
-      }
+    .entry-path a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
-      .grid.two {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    .entry-desc {
+      color: var(--steel);
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+    }
 
-      .timeline-item,
-      .project,
-      .quote {
-        padding: 1.1rem;
-      }
-
-      .timeline-item p,
-      .project p,
-      .quote p {
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .meta {
-        color: var(--accent);
-        font-weight: 600;
-        margin-bottom: 0.4rem;
-        font-size: 0.92rem;
-      }
-
-      .skills {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        margin-top: 0.8rem;
-      }
-
-      .tag {
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 0.35rem 0.8rem;
-        color: #d4e2ff;
-        font-size: 0.86rem;
-        background: #111934;
-      }
-
-      .contact {
-        text-align: center;
-        padding-bottom: 4rem;
-      }
-
-      footer {
-        border-top: 1px solid var(--border);
-        color: var(--muted);
-        text-align: center;
-        padding: 1rem;
-        font-size: 0.9rem;
-      }
-
-      @media (max-width: 900px) {
-        .hero,
-        .grid.two {
-          grid-template-columns: 1fr;
-        }
-
-        .links {
-          display: none;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header class="nav">
-      <div class="container nav-inner">
-        <div class="brand">ROBERT MARSTON</div>
-        <nav class="links" aria-label="Primary navigation">
-          <a href="#about">About</a>
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </div>
+    /* ── Footer ── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--steel);
+      font-size: 0.72rem;
+      color: var(--steel);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <p class="registry-label">// personal registry</p>
+      <h1>R.<span>MARSTON</span><span class="cursor" aria-hidden="true"></span></h1>
     </header>
 
-    <main class="container">
-      <section class="hero" id="about">
-        <div>
-          <span class="eyebrow">Personal Career Site</span>
-          <h1>
-            Building teams, products, and momentum with measurable outcomes.
-          </h1>
-          <p class="lead">
-            I’m Robert Marston, a strategy and operations leader focused on
-            turning complex initiatives into practical, scalable results. This
-            site highlights my professional journey, core strengths, and
-            selected achievements.
-          </p>
-          <div class="cta-row">
-            <a class="btn primary" href="#contact">Let’s Connect</a>
-            <a class="btn" href="#projects">View Featured Work</a>
-          </div>
-        </div>
-
-        <aside class="card hero-card" aria-label="Quick profile stats">
-          <h2>Career Snapshot</h2>
-          <div class="stat">
-            <strong>12+</strong>
-            <span
-              >Years leading cross-functional teams across product, operations,
-              and growth.</span
-            >
-          </div>
-          <div class="stat">
-            <strong>40%</strong>
-            <span
-              >Average efficiency gains delivered through process redesign
-              programs.</span
-            >
-          </div>
-          <div class="stat">
-            <strong>$18M</strong>
-            <span
-              >Portfolio value influenced through strategic execution and market
-              expansion.</span
-            >
-          </div>
-        </aside>
-      </section>
-
-      <section id="experience">
-        <h3>Professional Experience</h3>
-        <div class="grid two">
-          <article class="card timeline-item">
-            <div class="meta">
-              2020–Present · Director of Strategy, Northbridge Ventures
-            </div>
-            <p>
-              Led enterprise transformation initiatives, created KPI-led
-              planning systems, and built operating rhythms that improved
-              delivery predictability and executive visibility.
-            </p>
-          </article>
-
-          <article class="card timeline-item">
-            <div class="meta">
-              2016–2020 · Senior Program Manager, Elevate Dynamics
-            </div>
-            <p>
-              Managed multi-region product rollouts, improved stakeholder
-              alignment, and reduced launch friction through standardized
-              operating playbooks.
-            </p>
-          </article>
-
-          <article class="card timeline-item">
-            <div class="meta">2012–2016 · Business Analyst, Arcline Group</div>
-            <p>
-              Delivered performance analysis and market research that informed
-              investment decisions, pricing strategy, and customer growth plans.
-            </p>
-          </article>
-
-          <article class="card timeline-item">
-            <div class="meta">Education · MBA, Business Strategy</div>
-            <p>
-              Specialized in strategic leadership, data-driven decision making,
-              and innovation management.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section id="projects">
-        <h3>Featured Projects</h3>
-        <div class="grid two">
-          <article class="card project">
-            <div class="meta">Operational Excellence Program</div>
-            <p>
-              Designed and implemented a process optimization framework that
-              reduced cycle times by 32% and improved service quality metrics
-              across three business units.
-            </p>
-          </article>
-
-          <article class="card project">
-            <div class="meta">Go-To-Market Acceleration</div>
-            <p>
-              Directed cross-functional launch planning for a new B2B offering,
-              achieving first-quarter revenue targets 20% ahead of forecast.
-            </p>
-          </article>
-        </div>
-
-        <div class="skills" aria-label="Core skills">
-          <span class="tag">Strategic Planning</span>
-          <span class="tag">Program Leadership</span>
-          <span class="tag">Operations Optimization</span>
-          <span class="tag">Stakeholder Management</span>
-          <span class="tag">Team Development</span>
-          <span class="tag">Data-Driven Decision Making</span>
-        </div>
-      </section>
-
-      <section>
-        <h3>Testimonials</h3>
-        <div class="grid two">
-          <blockquote class="card quote">
-            <p>
-              “Robert is the rare leader who combines strategic depth with
-              practical execution. He creates clarity where others see
-              complexity.”
-            </p>
-            <cite>— Former VP, Product & Operations</cite>
-          </blockquote>
-
-          <blockquote class="card quote">
-            <p>
-              “His ability to align teams and drive measurable outcomes was
-              instrumental to our regional expansion.”
-            </p>
-            <cite>— COO, Enterprise Services Firm</cite>
-          </blockquote>
-        </div>
-      </section>
-
-      <section class="contact" id="contact">
-        <h3>Let’s Work Together</h3>
-        <p class="lead" style="margin-inline: auto">
-          I’m open to senior leadership, consulting, and advisory opportunities
-          where strategic direction and execution excellence are key.
-        </p>
-        <div class="cta-row" style="justify-content: center">
-          <a class="btn primary" href="mailto:robert.marston@example.com"
-            >robert.marston@example.com</a
-          >
-          <a
-            class="btn"
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="noreferrer noopener"
-            >LinkedIn Profile</a
-          >
-        </div>
-      </section>
+    <main>
+      <table class="dir-table" aria-label="Site directory">
+        <thead>
+          <tr>
+            <th>path</th>
+            <th>status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="entry-path"><a href="https://rmarston.com" target="_blank" rel="noopener noreferrer">~/executive-hub</a></div>
+              <div class="entry-desc">Portfolio &amp; executive identity — rmarston.com</div>
+            </td>
+            <td>live</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="entry-path"><a href="./armsway/">~/armsway</a></div>
+              <div class="entry-desc">Patented Disposable Blood Pressure Sleeves — medical engineering</div>
+            </td>
+            <td>staging</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="entry-path"><a href="./solefoodny/">~/solefoodny</a></div>
+              <div class="entry-desc">#SFNY — sneaker boutique brand identity</div>
+            </td>
+            <td>staging</td>
+          </tr>
+        </tbody>
+      </table>
     </main>
 
     <footer>
-      © <span id="year"></span> Robert Marston. All rights reserved.
+      <span>rmarston.com</span>
+      <span>R. Marston &mdash; All rights reserved</span>
     </footer>
-
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
-    <!-- Core theme JS-->
-    <script src="dist/js/scripts.js"></script>
-  </body>
+  </div>
+</body>
 </html>
