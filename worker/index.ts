@@ -15,15 +15,16 @@ export interface Env {
   SEND_EMAIL?: SendEmailBinding;
 }
 
-function getRedirectStatus(value?: string): 301 | 302 | 307 | 308 {
+export function getRedirectStatus(value?: string): 301 | 302 | 307 | 308 {
   const parsed = Number(value);
-  if (parsed === 301 || parsed === 302 || parsed === 307 || parsed === 308) {
-    return parsed;
+  const redirectStatuses = [301, 302, 307, 308];
+  if (redirectStatuses.includes(parsed)) {
+    return parsed as 301 | 302 | 307 | 308;
   }
   return 301;
 }
 
-function buildUpstreamUrl(origin: string, path: string, search: string): URL {
+export function buildUpstreamUrl(origin: string, path: string, search: string): URL {
   const url = new URL(origin);
   url.pathname = path;
   url.search = search;
@@ -184,6 +185,36 @@ export default {
     );
 
     const upstreamHeaders = new Headers(request.headers);
+
+    // Standard hop-by-hop headers as per RFC 7230
+    const hopByHopHeaders = [
+      "connection",
+      "keep-alive",
+      "proxy-authenticate",
+      "proxy-authorization",
+      "te",
+      "trailers",
+      "transfer-encoding",
+      "upgrade",
+    ];
+
+    // Headers listed in the 'Connection' header are also hop-by-hop
+    const connectionHeader = request.headers.get("connection");
+    if (connectionHeader) {
+      for (const header of connectionHeader.split(",")) {
+        hopByHopHeaders.push(header.trim().toLowerCase());
+      }
+    }
+
+    // Sensitive headers that should not be forwarded
+    const sensitiveHeaders = ["cookie", "authorization"];
+
+    const headersToStrip = [...hopByHopHeaders, ...sensitiveHeaders];
+
+    for (const header of headersToStrip) {
+      upstreamHeaders.delete(header);
+    }
+
     upstreamHeaders.set("host", new URL(upstreamOrigin).hostname);
     upstreamHeaders.set("x-forwarded-host", requestUrl.hostname);
     upstreamHeaders.set(
@@ -201,7 +232,7 @@ export default {
       redirect: "manual",
     });
 
-    return fetch(upstreamRequest, {
+    return globalThis.fetch(upstreamRequest, {
       redirect: "manual",
     });
   },
