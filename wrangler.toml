@@ -3,9 +3,9 @@ main = "worker/index.ts"
 compatibility_date = "2026-03-22"
 
 # Deployment model for this repository:
-# - rmarston.com is served by Cloudflare Pages production deployment.
-# - This worker is intentionally NOT attached to rmarston.com.
-# - Keep routes empty and manage domain routing in Cloudflare Pages + DNS.
+# - rmarston.com is served by GitHub Pages as the origin.
+# - Cloudflare provides DNS/proxy/WAF in front of the origin.
+# - This worker is intentionally NOT attached to rmarston.com routes.
 # - If any legacy worker route exists in Cloudflare dashboard, remove it.
 routes = []
 

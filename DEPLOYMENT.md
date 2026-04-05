@@ -1,30 +1,57 @@
-# Deployment Runbook: Promote `fb43ad81` to Production
+# Deployment Runbook: Cloudflare DNS + GitHub Pages Routing
 
-This runbook makes the preview deployment
-`https://fb43ad81.rmarston-github-io.pages.dev/`
-the main production deployment for `rmarston.com`.
+This runbook repairs and validates production routing for `rmarston.com` so traffic flows:
+
+**Visitor → Cloudflare DNS/Proxy/WAF → GitHub Pages origin (`marzton.github.io`)**
 
 ## Scope
 
-- Project: `rmarston-github-io` (Cloudflare Pages)
-- Target preview URL: `https://fb43ad81.rmarston-github-io.pages.dev/`
-- Production hostname: `rmarston.com`
+- DNS provider / edge: Cloudflare (`rmarston.com` zone)
+- Origin host: GitHub Pages (`marzton.github.io`)
+- Production hostnames: `rmarston.com`, `www.rmarston.com`
+- Worker policy: no worker routes for site traffic
 
-## Dashboard steps (recommended)
+## 1) Verify GitHub Pages settings
 
-1. Open Cloudflare Dashboard → **Workers & Pages** → **rmarston-github-io**.
-2. Open the **Deployments** tab.
-3. Find deployment `fb43ad81` (or the deployment matching that preview URL).
-4. Use **Promote to production** on that deployment.
-5. Verify the **Production** badge now points to `fb43ad81`.
-6. Open **Custom domains** and confirm `rmarston.com` is attached to this Pages project.
-7. Purge cache for `rmarston.com` (optional but recommended).
-8. Validate:
-   - `https://rmarston.com` loads expected content.
-   - `https://www.rmarston.com` (if used) resolves as intended.
+1. Open GitHub repo settings for this repository.
+2. Go to **Pages**.
+3. Confirm:
+   - Source is configured for this repo’s site.
+   - Custom domain is set to `rmarston.com`.
+   - HTTPS enforcement is enabled.
+4. Confirm repo has `CNAME` file containing exactly `rmarston.com`.
 
-## Post-promotion checks
+## 2) Repair Cloudflare DNS records
 
-- Confirm there are **no Worker routes** intercepting `rmarston.com`.
-- Keep `wrangler.toml` worker `routes = []` so the Worker cannot shadow Pages.
-- Keep GitHub Pages disabled for this domain to avoid origin ambiguity.
+In Cloudflare DNS for `rmarston.com`, ensure exactly these site records exist:
+
+- `@` `CNAME` `marzton.github.io` (Proxy status: **Proxied**)
+- `www` `CNAME` `marzton.github.io` (Proxy status: **Proxied**)
+
+Cleanup tasks:
+
+- Remove stale A/AAAA records for `@` or `www` that conflict with these CNAMEs.
+- Remove any stale Pages-origin CNAME targets (for example `*.pages.dev`) for apex/www.
+
+## 3) Remove route conflicts
+
+1. Open Cloudflare dashboard → **Workers & Pages** → **Workers**.
+2. Verify no route pattern captures:
+   - `rmarston.com/*`
+   - `www.rmarston.com/*`
+3. Keep this repo’s `wrangler.toml` as `routes = []`.
+
+## 4) Validate end-to-end routing
+
+- `https://rmarston.com` returns current site.
+- `https://www.rmarston.com` returns current site (either direct or redirected to apex).
+- TLS certificate is valid and issued for both hostnames.
+- Optional: purge Cloudflare cache after DNS/route updates.
+
+## 5) Rollback notes
+
+If traffic fails after changes:
+
+1. Re-check DNS record conflicts first (duplicate apex/www records are the most common breakage).
+2. Temporarily switch Cloudflare records to DNS-only for troubleshooting, then re-enable proxy.
+3. Confirm GitHub Pages custom domain still shows `rmarston.com` and HTTPS is active.

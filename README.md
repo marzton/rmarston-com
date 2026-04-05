@@ -8,25 +8,30 @@ Live at **[rmarston.com](https://rmarston.com)**.
 | Layer | Ownership / Technology |
 |---|---|
 | Site | Static HTML/CSS (single-page portfolio) |
-| Hosting | **Cloudflare Pages (production)** |
-| Domain | Cloudflare DNS + Custom Domain on Pages |
-| Worker (`worker/index.ts`) | **Deprecated for this domain** (no active routes) |
+| Hosting | **GitHub Pages (production origin)** |
+| Domain | Cloudflare DNS proxy in front of GitHub Pages |
+| Worker (`worker/index.ts`) | Optional utility worker only (**no site routes**) |
 
 ## Route ownership (authoritative)
 
-This repository now uses the **"Cloudflare Pages owns production"** deployment model:
+This repository uses the **"GitHub Pages origin + Cloudflare DNS/edge"** deployment model:
 
-- `rmarston.com` traffic is served by **Cloudflare Pages production deployment**.
-- Current target deployment to promote: `https://fb43ad81.rmarston-github-io.pages.dev/`.
-- GitHub Pages must not be used as production origin for `rmarston.com`.
-- `wrangler.toml` must keep `routes = []` for this worker.
-- Any legacy Cloudflare Worker route for this project should be removed from the Cloudflare dashboard so it cannot intercept `rmarston.com`.
+- `rmarston.com` and `www.rmarston.com` resolve through **Cloudflare DNS**.
+- Cloudflare DNS points to the GitHub Pages origin host `marzton.github.io`.
+- The site origin is **GitHub Pages** for this repository.
+- `wrangler.toml` must keep `routes = []` so no Worker can intercept site traffic.
+- Any legacy Cloudflare Worker route for `rmarston.com/*` should be removed in Cloudflare.
 
-This makes deployment ownership unambiguous and reproducible: Cloudflare Pages owns site serving, Cloudflare DNS owns domain mapping, and this worker owns no production route on `rmarston.com`.
+This keeps routing deterministic: GitHub Pages serves content, Cloudflare provides DNS/proxy/WAF, and Workers do not own the base web route.
 
-## Promoting a preview deployment to production
+## Cloudflare DNS records (required)
 
-Use the runbook in [`DEPLOYMENT.md`](./DEPLOYMENT.md) to promote a specific preview deployment (including `fb43ad81`) to production and make it the main live version.
+In the `rmarston.com` Cloudflare zone, configure:
+
+- `@` → `CNAME` → `marzton.github.io` (proxied)
+- `www` → `CNAME` → `marzton.github.io` (proxied)
+
+GitHub Pages must have custom domain set to `rmarston.com`, and this repo must keep the `CNAME` file committed with `rmarston.com`.
 
 ## Contact handling location
 
