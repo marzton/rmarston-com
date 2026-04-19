@@ -13,7 +13,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@6945a0d705814a1ad7802ee450c22ad3d21f92ee
         with:
           fetch-depth: 2 # Fetch the last commit for diffing
 
