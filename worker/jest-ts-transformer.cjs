@@ -19,11 +19,6 @@ function toCommonJs(sourceText) {
     'const __default_export__ = ',
   );
 
-  // Export everything that was defined as a function or const/let/var at top level?
-  // For now let's just export the default and any function that was exported.
-  // Actually, the simple approach is to just export default as that's what we mostly need.
-
-  return `${withDefaultConst}\nmodule.exports = __default_export__;\n`;
   // Find all function names that are defined (potentially exported)
   const exportedFunctions = [];
   const functionRegex = /^function\s+([a-zA-Z0-9_]+)/gm;
