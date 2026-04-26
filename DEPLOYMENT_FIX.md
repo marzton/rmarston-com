@@ -4,7 +4,8 @@ The build failure `2026-04-26T03:54:11.504Z Failed: root directory not found` oc
 
 ## Resolution Steps
 
-To fix this for `rmarston.com`, update the Cloudflare Pages project settings to point to the correct location:
+### 1. Fix Pages Build Settings
+To fix the build error for `rmarston.com`, update the Cloudflare Pages project settings:
 
 1.  **Open Cloudflare Dashboard**: Go to **Workers & Pages** > **Pages**.
 2.  **Select Project**: Click on the `rmarston-github-io` project (or the project serving `rmarston.com`).
@@ -14,6 +15,15 @@ To fix this for `rmarston.com`, update the Cloudflare Pages project settings to 
     *   **Build command**: `npm run build`
     *   **Build output directory**: `dist`
 5.  **Save and Redeploy**: Save the changes and trigger a new deployment from the "Deployments" tab.
+
+### 2. Configure DNS for Worker Subdomains
+The following subdomains are required for the API and administration services. Ensure they are configured in **Cloudflare DNS**:
+
+- `api.rmarston.com` (CNAME to `rmarston-com.<account>.workers.dev`)
+- `admin.rmarston.com` (CNAME to `rmarston-com.<account>.workers.dev`)
+- `preview.rmarston.com` (CNAME to `rmarston-com.<account>.workers.dev`)
+
+*Note: Ensure "Proxy status" is set to **Proxied** (Orange cloud).*
 
 ## Technical Context
 
@@ -26,5 +36,3 @@ The following Worker routes are required and will be attached to the `rmarston-c
 - `api.rmarston.com/*`
 - `admin.rmarston.com/*`
 - `preview.rmarston.com/*`
-
-Ensure these subdomains have CNAME records pointing to your worker or are configured as Custom Domains in the Cloudflare Worker dashboard.

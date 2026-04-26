@@ -1,6 +1,6 @@
 'use strict';
 
-const worker = require('./index.ts');
+const worker = require('./index');
 
 if (typeof URL === 'undefined') {
   global.URL = require('url').URL;
@@ -91,7 +91,9 @@ describe('Cloudflare Worker API + asset routing', () => {
     const response = await worker.default.fetch(request, env);
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
+    expect(response.headers.get('Content-Type')).toBe('application/json');
+    const json = await response.json();
+    expect(json).toEqual({ success: true });
     expect(env.SEND_EMAIL.send).toHaveBeenCalled();
   });
 
