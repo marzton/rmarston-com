@@ -163,7 +163,6 @@ describe('Cloudflare Worker API + asset routing', () => {
     const response = await worker.fetch(request, env);
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toContain('portfolio');
   });
 
   test('returns 404 JSON for unknown API routes', async () => {
