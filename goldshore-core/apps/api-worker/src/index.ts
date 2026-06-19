@@ -41,7 +41,12 @@ app.use("/admin/*", async (c, next) => {
 // ---------------------------------------------------------------------------
 // Example: create a user (protected by CF Access via /admin namespace)
 // ---------------------------------------------------------------------------
-app.post("/users", async (c) => {
+
+// Explicitly reject legacy unscoped route to avoid bypassing /admin CF Access middleware
+app.post("/users", (c) =>
+  c.json({ error: "Use /admin/users with CF Access authentication" }, 404)
+);
+app.post("/admin/users", async (c) => {
   const { email, name } = await c.req.json<{ email: string; name: string }>();
 
   const result = await c.env.DB.prepare(

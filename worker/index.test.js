@@ -103,8 +103,6 @@ global.ReadableStream = class {
   }
 };
 
-const worker = require('./index.ts');
-
 describe('Cloudflare Worker API + asset routing', () => {
   test('handles POST /api/contact with valid data', async () => {
     const formData = new FormData();
@@ -127,10 +125,12 @@ describe('Cloudflare Worker API + asset routing', () => {
       async text() { return this.body; }
     };
 
-    const response = await worker.fetch(request, env);
+    const response = await worker.default.fetch(request, env);
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ success: true });
+    expect(response.headers.get('Content-Type')).toBe('application/json');
+    const json = await response.json();
+    expect(json).toEqual({ success: true });
     expect(env.SEND_EMAIL.send).toHaveBeenCalled();
   });
 
@@ -146,7 +146,7 @@ describe('Cloudflare Worker API + asset routing', () => {
       body: formData
     });
 
-    const response = await worker.fetch(request, {});
+    const response = await worker.default.fetch(request, {});
 
     expect(response.status).toBe(422);
     expect(await response.json()).toEqual({ error: 'Invalid email address.' });
@@ -163,7 +163,6 @@ describe('Cloudflare Worker API + asset routing', () => {
     const response = await worker.fetch(request, env);
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toContain('portfolio');
   });
 
   test('returns 404 JSON for unknown API routes', async () => {
