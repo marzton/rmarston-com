@@ -42,7 +42,7 @@
         "pug": "3.0.4",
         "sass": "1.102.0",
         "shelljs": "0.10.0",
-        "upath": "3.0.7"
+        "upath": "3.0.8"
     },
     "devDependencies": {
         "@babel/preset-env": "^8.0.2",
