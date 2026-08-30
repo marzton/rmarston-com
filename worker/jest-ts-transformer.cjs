@@ -9,7 +9,7 @@ function toCommonJs(sourceText) {
     'const __default_export__ = ',
   );
 
-  return `${withDefaultConst}\nmodule.exports = { default: __default_export__, getRedirectStatus, buildUpstreamUrl };\n`;
+  return `${withDefaultConst}\nmodule.exports = { default: __default_export__ };\n`;
 }
 
 module.exports = {
