@@ -1,4 +1,4 @@
-name: Deploy Worker
+name: Validate Pages Release
 
 on:
   push:
@@ -6,12 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
-      deployments: write
 
     steps:
       - uses: actions/checkout@v4
@@ -30,22 +29,8 @@ jobs:
       - name: Build
         run: npm run build --if-present
 
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --name ${{ vars.WORKER_NAME || github.event.repository.name }}
-
-      - name: Health check
+      - name: Verify Pages artifact
         run: |
-          HEALTH_URL="${{ vars.HEALTH_CHECK_URL }}"
-          if [ -n "$HEALTH_URL" ]; then
-            sleep 5
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$HEALTH_URL")
-            if [ "$STATUS" != "200" ]; then
-              echo "Health check failed: $STATUS"
-              exit 1
-            fi
-            echo "Health check passed: $STATUS"
-          fi
+          test -f dist/index.html
+          test -f dist/robots.txt
+          test -f dist/sitemap.xml
