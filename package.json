@@ -50,6 +50,6 @@
         "browser-sync": "3.0.4",
         "chokidar": "5.0.0",
         "concurrently": "10.0.5",
-        "jest": "^30.4.2"
+        "jest": "^30.5.0"
     }
 }
