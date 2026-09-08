@@ -14,25 +14,27 @@
         "start:debug": "npm run build && node scripts/start-debug.js",
         "test": "jest"
     },
-    "description": "Robert Marston's personal career website \u2014 DevOps Engineer & Cloud Architect.",
+    "description": "Robert Marston — systems architect, applied AI operator, digital infrastructure lead, and founder of Gold Shore Labs.",
     "keywords": [
-        "css",
-        "sass",
-        "html",
-        "responsive",
-        "theme",
-        "template"
+        "systems architecture",
+        "applied ai",
+        "cloud infrastructure",
+        "automation",
+        "digital publishing",
+        "technical operations",
+        "cloudflare",
+        "research workflows"
     ],
     "homepage": "https://rmarston.com",
     "bugs": {
-        "url": "https://github.com/marzton/rmarston-github-io/issues"
+        "url": "https://github.com/marzton/rmarston-com/issues"
     },
     "license": "MIT",
     "author": "Robert Marston",
     "contributors": [],
     "repository": {
         "type": "git",
-        "url": "https://github.com/marzton/rmarston-github-io.git"
+        "url": "https://github.com/marzton/rmarston-com.git"
     },
     "dependencies": {
         "autoprefixer": "10.5.4",
@@ -45,11 +47,11 @@
         "upath": "3.0.8"
     },
     "devDependencies": {
-        "@babel/preset-env": "^7.29.7",
+        "@babel/preset-env": "^8.0.2",
         "@babel/preset-typescript": "^7.29.7",
         "browser-sync": "3.0.4",
         "chokidar": "5.0.0",
         "concurrently": "10.0.5",
-        "jest": "^30.4.2"
+        "jest": "^30.5.0"
     }
 }

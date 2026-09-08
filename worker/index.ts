@@ -107,6 +107,8 @@ async function handleContactForm(request: Request, env: Env): Promise<Response> 
   );
 }
 
+const AI_STUDIO_APP_URL = "https://rob-marston-portfolio.ai.studio";
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const requestUrl = new URL(request.url);
@@ -117,6 +119,12 @@ export default {
       (request.method === "POST" || request.method === "OPTIONS")
     ) {
       return handleContactForm(request, env);
+    }
+
+    // Apex/www: redirect to the AI Studio portfolio app.
+    // AI Studio has no custom-domain feature, so this Worker is the bridge.
+    if (requestUrl.hostname === "rmarston.com" || requestUrl.hostname === "www.rmarston.com") {
+      return Response.redirect(AI_STUDIO_APP_URL + requestUrl.pathname + requestUrl.search, 302);
     }
 
     return new Response(`No worker route is configured for ${requestUrl.pathname}.`, {
