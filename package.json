@@ -1,55 +1,57 @@
 {
-    "title": "rmarston.com",
-    "name": "rmarston-github-io",
-    "version": "1.0.0",
-    "scripts": {
-        "build": "node scripts/build.js",
-        "build:legacy": "npm run clean && npm run build:pug && npm run build:scss && npm run build:scripts && npm run build:assets",
-        "build:assets": "node scripts/build-assets.js",
-        "build:pug": "node scripts/build-pug.js",
-        "build:scripts": "node scripts/build-scripts.js",
-        "build:scss": "node scripts/build-scss.js",
-        "clean": "node scripts/clean.js",
-        "start": "npm run build && node scripts/start.js",
-        "start:debug": "npm run build && node scripts/start-debug.js",
-        "test": "jest"
-    },
-    "description": "Robert Marston's personal career website — systems architect, applied AI operator, researcher, publisher, and founder of Gold Shore Labs.",
-    "keywords": [
-        "systems architecture",
-        "applied ai",
-        "cloud",
-        "web development",
-        "research workflows",
-        "digital publishing"
-    ],
-    "homepage": "https://rmarston.com",
-    "bugs": {
-        "url": "https://github.com/marzton/rmarston-com/issues"
-    },
-    "license": "MIT",
-    "author": "Robert Marston",
-    "contributors": [],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/marzton/rmarston-com.git"
-    },
-    "dependencies": {
-        "autoprefixer": "10.5.4",
-        "bootstrap": "5.3.8",
-        "postcss": "8.5.26",
-        "prettier": "3.9.6",
-        "pug": "3.0.4",
-        "sass": "1.103.1",
-        "shelljs": "0.10.0",
-        "upath": "3.0.8"
-    },
-    "devDependencies": {
-        "@babel/preset-env": "^7.29.0",
-        "@babel/preset-typescript": "^7.29.7",
-        "browser-sync": "3.0.4",
-        "chokidar": "5.0.0",
-        "concurrently": "10.0.5",
-        "jest": "^30.5.0"
-    }
+  "title": "rmarston.com",
+  "name": "rmarston-com",
+  "version": "2.0.0",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:legacy": "npm run clean && npm run build:pug && npm run build:scss && npm run build:scripts && npm run build:assets",
+    "build:assets": "node scripts/build-assets.js",
+    "build:pug": "node scripts/build-pug.js",
+    "build:scripts": "node scripts/build-scripts.js",
+    "build:scss": "node scripts/build-scss.js",
+    "clean": "node scripts/clean.js",
+    "start": "npm run build && node scripts/start.js",
+    "start:debug": "npm run build && node scripts/start-debug.js",
+    "test": "jest"
+  },
+  "description": "Robert Marston — systems architect, applied AI operator, digital infrastructure lead, and founder of Gold Shore Labs.",
+  "keywords": [
+    "systems architecture",
+    "applied ai",
+    "cloud infrastructure",
+    "automation",
+    "digital publishing",
+    "technical operations",
+    "cloudflare",
+    "research workflows"
+  ],
+  "homepage": "https://rmarston.com",
+  "bugs": {
+    "url": "https://github.com/marzton/rmarston-com/issues"
+  },
+  "license": "MIT",
+  "author": "Robert Marston",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marzton/rmarston-com.git"
+  },
+  "dependencies": {
+    "autoprefixer": "10.5.4",
+    "bootstrap": "5.3.8",
+    "postcss": "8.5.26",
+    "prettier": "3.9.6",
+    "pug": "3.0.4",
+    "sass": "1.103.1",
+    "shelljs": "0.10.0",
+    "upath": "3.0.8"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-typescript": "^7.29.7",
+    "browser-sync": "3.0.4",
+    "chokidar": "5.0.0",
+    "concurrently": "10.0.5",
+    "jest": "^30.5.0"
+  }
 }
