@@ -14,14 +14,16 @@
         "start:debug": "npm run build && node scripts/start-debug.js",
         "test": "jest"
     },
-    "description": "Robert Marston's personal career website — systems architect, applied AI operator, researcher, publisher, and founder of Gold Shore Labs.",
+    "description": "Robert Marston — systems architect, applied AI operator, digital infrastructure lead, and founder of Gold Shore Labs.",
     "keywords": [
         "systems architecture",
         "applied ai",
-        "cloud",
-        "web development",
-        "research workflows",
-        "digital publishing"
+        "cloud infrastructure",
+        "automation",
+        "digital publishing",
+        "technical operations",
+        "cloudflare",
+        "research workflows"
     ],
     "homepage": "https://rmarston.com",
     "bugs": {
@@ -45,7 +47,7 @@
         "upath": "3.0.8"
     },
     "devDependencies": {
-        "@babel/preset-env": "^7.29.0",
+        "@babel/preset-env": "^8.0.2",
         "@babel/preset-typescript": "^7.29.7",
         "browser-sync": "3.0.4",
         "chokidar": "5.0.0",
