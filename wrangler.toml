@@ -3,7 +3,8 @@ main = "worker/index.ts"
 compatibility_date = "2025-03-07"
 compatibility_flags = ["nodejs_compat"]
 
-# Serves rmarston.com directly via Worker + static assets
+# Serves api/admin/preview subdomains only — apex and www are routed to a
+# separate app (AI Studio) via DNS; see docs/DOMAIN_BOUNDARIES.md
 # Worker handles /api/contact, assets serve dist/
 assets = { directory = "./dist", not_found_handling = "single-page-application", binding = "ASSETS" }
 
@@ -36,12 +37,4 @@ zone_name = "rmarston.com"
 
 [[routes]]
 pattern = "preview.rmarston.com/*"
-zone_name = "rmarston.com"
-
-[[routes]]
-pattern = "rmarston.com/*"
-zone_name = "rmarston.com"
-
-[[routes]]
-pattern = "www.rmarston.com/*"
 zone_name = "rmarston.com"
