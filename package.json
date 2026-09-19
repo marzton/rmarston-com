@@ -39,10 +39,10 @@
     "dependencies": {
         "autoprefixer": "10.5.4",
         "bootstrap": "5.3.8",
-        "postcss": "8.5.26",
+        "postcss": "8.5.28",
         "prettier": "3.9.6",
         "pug": "3.0.4",
-        "sass": "1.103.1",
+        "sass": "1.104.1",
         "shelljs": "0.10.0",
         "upath": "3.0.8"
     },
