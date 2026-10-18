@@ -39,8 +39,8 @@
     "dependencies": {
         "autoprefixer": "10.6.1",
         "bootstrap": "5.3.8",
-        "postcss": "8.5.29",
-        "prettier": "3.9.8",
+        "postcss": "8.5.30",
+        "prettier": "3.9.10",
         "pug": "3.0.4",
         "sass": "1.105.1",
         "shelljs": "0.10.0",
@@ -51,7 +51,7 @@
         "@babel/preset-typescript": "^8.0.1",
         "browser-sync": "3.0.4",
         "chokidar": "5.0.0",
-        "concurrently": "10.0.5",
+        "concurrently": "10.0.6",
         "jest": "^30.5.0"
     }
 }
