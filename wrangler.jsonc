@@ -15,7 +15,7 @@
     "ENV": "production",
     "PRIMARY_DOMAIN": "rmarston.com",
     "CONTACT_FROM_EMAIL": "hello@rmarston.com",
-    "CONTACT_TO_EMAIL": "rob@rmarston.com"
+    "CONTACT_TO_EMAIL": "goldshorelabs@gmail.com"
   },
   // Secrets
   // WEBHOOK_SECRET
@@ -26,7 +26,8 @@
   },
   "send_email": [
     {
-      "name": "SEND_EMAIL"
+      "name": "SEND_EMAIL",
+      "allowed_destination_addresses": ["goldshorelabs@gmail.com"]
     }
   ],
   "d1_databases": [

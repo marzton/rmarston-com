@@ -2,11 +2,13 @@ export interface Env {
   PRIMARY_DOMAIN?: string;
   CONTACT_TO_EMAIL?: string;
   RESEND_API_KEY?: string;
+  CONTACT_FROM_EMAIL?: string;
+  SEND_EMAIL?: { send(message: unknown): Promise<void> };
 }
 
 /**
  * Handle POST /api/contact — parse form data and send an email
- * via the Resend API.
+ * via Resend or the configured Cloudflare email binding.
  */
 async function handleContactForm(request: Request, env: Env): Promise<Response> {
   const allowedOrigin = "https://rmarston.com";
@@ -52,7 +54,7 @@ async function handleContactForm(request: Request, env: Env): Promise<Response> 
   }
 
   const toAddr = env.CONTACT_TO_EMAIL?.trim() || "rob@rmarston.com";
-  const fromAddr = "mail@rmarston.com"; // Verified Resend domain
+  const fromAddr = env.CONTACT_FROM_EMAIL?.trim() || "mail@rmarston.com";
 
   const emailSubject = `[rmarston.com Contact] ${subject} — ${name}`;
   const emailBody = [
@@ -85,20 +87,41 @@ async function handleContactForm(request: Request, env: Env): Promise<Response> 
       });
 
       if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Resend API error:", errorText);
+        console.error("Resend API error", res.status);
         throw new Error("Failed to send email via Resend.");
       }
     } catch (err) {
-      console.error("Email send error:", err);
+      console.error("Email send failed");
       return new Response(
         JSON.stringify({ error: "Failed to send email." }),
         { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } },
       );
     }
+  } else if (env.SEND_EMAIL) {
+    try {
+      const { EmailMessage } = await import('cloudflare:email');
+      const encodedSubject = btoa(Array.from(new TextEncoder().encode(emailSubject), byte => String.fromCharCode(byte)).join(''));
+      const rawMessage = [
+        `From: ${fromAddr}`,
+        `To: ${toAddr}`,
+        `Reply-To: ${email}`,
+        `Subject: =?UTF-8?B?${encodedSubject}?=`,
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        '',
+        emailBody,
+      ].join('\r\n');
+      await env.SEND_EMAIL.send(new EmailMessage(fromAddr, toAddr, rawMessage));
+    } catch {
+      console.error('Contact email delivery failed');
+      return new Response(JSON.stringify({ error: 'Failed to send email.' }), {
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
   } else {
-    // RESEND_API_KEY not configured — log and succeed gracefully in dev/staging
-    console.log("RESEND_API_KEY not configured. Would have sent via Resend:\n", emailBody);
+    return new Response(JSON.stringify({ error: 'Contact delivery is temporarily unavailable.' }), {
+      status: 503, headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
   }
 
   return new Response(
@@ -128,3 +151,4 @@ export default {
     });
   },
 };
+
